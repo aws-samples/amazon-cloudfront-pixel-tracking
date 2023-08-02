@@ -12,7 +12,7 @@ to store in S3 for future processing.
 
 ## Requirements
 
-- AWS CDK 2.59.x
+- AWS CDK 2.89.x
 - Configured AWS credentials
 
 ## Deploy on AWS
@@ -56,7 +56,7 @@ by generating HTTP-GET requests to the URL of the template output. As an
 example, this would be an HTTP call for the example implementation:
 
 ```bash
-curl -G -d 'userid=aws_user' -d 'thirdpartyname=example.hightrafficwebsite.com' https://<your template output domain>/1x1.png.
+curl -G -d 'userid=aws_user' -d 'thirdpartyname=example.hightrafficwebsite.com' https://<your template output domain>/1x1.png
 ```
 
 ## Testing CDK constructs
