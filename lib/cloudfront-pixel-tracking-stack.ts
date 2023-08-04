@@ -190,6 +190,12 @@ export class CloudFrontPixelTrackingStack extends Stack {
           allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         },
+        additionalBehaviors: {
+          '1x1.png': {
+            origin: new origins.S3Origin(bucket),
+            viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          },
+        },
         logBucket: loggingBucket,
         logFilePrefix: 'cloudfront-access-logs',
       }
@@ -237,8 +243,9 @@ export class CloudFrontPixelTrackingStack extends Stack {
     // Real-time logs aren't directly supported by the new API, so use escape hatches
     const cfnDistribution = distribution.node.defaultChild as cloudfront.CfnDistribution;
 
+    // Only add real-time logs for the transparent pixel
     cfnDistribution.addPropertyOverride(
-      'DistributionConfig.DefaultCacheBehavior.RealtimeLogConfigArn', cfnRealtimeLogConfig.attrArn
+      'DistributionConfig.CacheBehaviors.0.RealtimeLogConfigArn', cfnRealtimeLogConfig.attrArn
     );
 
     new s3deploy.BucketDeployment(this, 'pixel-tracking-deploy-webpage', {
