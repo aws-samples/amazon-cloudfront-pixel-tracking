@@ -12,7 +12,7 @@ to store in S3 for future processing.
 
 ## Requirements
 
-- AWS CDK 2.89.x
+- AWS CDK 2.93.x
 - Configured AWS credentials
 
 ## Deploy on AWS

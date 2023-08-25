@@ -133,6 +133,21 @@ export class CloudFrontPixelTrackingStack extends Stack {
 
     dataLake.grantRead(glueRole);
 
+    // Classifier will help define the metadata tables used by AWS Glue Data Catalog
+    const classifer = new glue.CfnClassifier(this, 'pixel-tracking-glue-classifer', {
+      csvClassifier: {
+        name: 'pixel-tracking-classifier-csv',
+        delimiter: '\t',
+        quoteSymbol: '\"',
+        containsHeader: 'ABSENT',
+        header: ['timestamp', 'request_ip', 'user_agent', 'uri_query' ],
+        containsCustomDatatype: ['double', 'string', 'string', 'string'],
+        customDatatypeConfigured: true,
+        disableValueTrimming: false,
+        allowSingleColumn: false,
+      },
+    });
+
     // Security configuration is used to encrypt data at rest for glue
     const glueSecurityOptions = new glue_alpha.SecurityConfiguration(this, 
       'pixel-tracking-glue-security-configuration', {
@@ -160,6 +175,7 @@ export class CloudFrontPixelTrackingStack extends Stack {
       },
       databaseName: glueDatabase.databaseName,
       description: 'Glue crawler for pixel tracking data',
+      classifiers: [ classifer.ref ],
       crawlerSecurityConfiguration: glueSecurityOptions.securityConfigurationName,
       recrawlPolicy: {
         recrawlBehavior: 'CRAWL_EVERYTHING',
